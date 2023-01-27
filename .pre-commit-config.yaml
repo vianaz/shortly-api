@@ -1,0 +1,24 @@
+repos:
+ - repo: local
+   hooks:
+    - id: Black
+      name: Formatting in Project
+      entry: black --check --diff src
+      language: python
+      types: [python]
+      stages: [commit]
+
+    - id: Pylint
+      name: Linting in Project
+      entry: pylint
+      args: [--rcfile=.pylintrc, --output-format=colorized, --reports=n, --fail-under=10]
+      language: python
+      types: [python]
+      stages: [commit]
+
+    - id: Pytest
+      name: Testing in Project
+      entry: pytest
+      language: python
+      types: [python]
+      stages: [commit]
