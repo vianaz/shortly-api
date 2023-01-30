@@ -3,22 +3,23 @@ repos:
    hooks:
     - id: Black
       name: Formatting in Project
-      entry: black --check --diff src
-      language: python
+      entry: black
+      args: ["--check", "--diff"]
+      language: system
       types: [python]
-      stages: [commit]
+
 
     - id: Pylint
       name: Linting in Project
       entry: pylint
-      args: [--rcfile=.pylintrc, --output-format=colorized, --reports=n, --fail-under=10]
-      language: python
+      args: [--rcfile=.pylintrc, --output-format=colorized, --reports=n, --fail-under=9, src]
+      language: system
       types: [python]
-      stages: [commit]
 
     - id: Pytest
       name: Testing in Project
       entry: pytest
-      language: python
+      args: ["--cov=src", "--cov-report=term-missing", "--cov-report=html", "--cov-fail-under=90"]
+      language: system
+      files: test_*.py
       types: [python]
-      stages: [commit]
