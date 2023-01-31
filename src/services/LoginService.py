@@ -1,3 +1,6 @@
+from fastapi import HTTPException
+from libs import crypt
+
 from repositories.LoginRepositoryInMemory import LoginRepositoryInMemory
 
 
@@ -7,26 +10,35 @@ class LoginService:
 
     def signin(self, credentials):
         user = self._login_repository.findByEmail(credentials.email)
-        credentials = dict(credentials)
 
         if user is None:
-            return {}
+            raise HTTPException(status_code=401, detail="Invalid email")
 
-        if user.get("password") != credentials.get("password"):
-            return {"error": "Invalid password"}
+        is_invalid_password = not crypt.decrypt(
+            credentials.password, str(user.get("password"))
+        )
 
-        return user
+        if is_invalid_password:
+            raise HTTPException(status_code=401, detail="Invalid password")
+
+        return "Logged in successfully"
 
     def signup(self, credentials):
         user = self._login_repository.findByEmail(credentials.email)
         credentials = dict(credentials)
 
         if credentials.get("password") != credentials.get("confirmPassword"):
-            return {"error": "Passwords do not match"}
+            raise HTTPException(status_code=401, detail="Passwords do not match")
 
         if user is not None:
-            return {"error": "Email already registered"}
+            raise HTTPException(status_code=401, detail="User already exists")
 
-        user = self._login_repository.create(credentials)
+        credentials = {
+            "name": credentials.get("name"),
+            "email": credentials.get("email"),
+            "password": crypt.encrypt(str(credentials.get("password"))),
+        }
 
-        return user
+        self._login_repository.create(credentials)
+
+        return "User created successfully"

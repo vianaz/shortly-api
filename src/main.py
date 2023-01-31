@@ -11,7 +11,7 @@ load_dotenv()
 def main():
     uvicorn.run(
         "src:app",
-        host="localhost",
+        host="0.0.0.0",
         port=int(int(os.getenv("PORT") or 8000)),
         reload=True,
     )
