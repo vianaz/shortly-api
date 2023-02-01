@@ -2,9 +2,9 @@ FROM python:3.10
 
 WORKDIR /app
 
-USER root
-
-RUN pip install poetry
-RUN poetry config virtualenvs.create true && poetry config virtualenvs.in-project true
+RUN pip install poetry && \
+    python -m poetry config virtualenvs.create true && \
+    python -m poetry config virtualenvs.in-project true && \
+    python -m poetry config virtualenvs.options.always-copy true
 
 COPY . .
